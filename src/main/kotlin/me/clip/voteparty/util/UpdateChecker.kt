@@ -11,10 +11,12 @@ object UpdateChecker
 	
 	fun check(plugin: Plugin, id: Int, complete: (result: UpdateResult) -> Unit)
 	{
-		plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable
-		{
-			complete.invoke(check(plugin.description.version, id))
-		})
+		if (false) {
+			plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable
+			{
+				complete.invoke(check(plugin.description.version, id))
+			})
+		}
 	}
 	
 	/**

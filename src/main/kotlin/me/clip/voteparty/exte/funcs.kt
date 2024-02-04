@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
+import java.util.concurrent.TimeUnit
 
 private val serializer = LegacyComponentSerializer.legacyAmpersand()
 
@@ -55,34 +56,79 @@ internal fun msgAsString(issuer: CommandIssuer, key: MessageKeyProvider): String
 	return issuer.manager.locales.getMessage(issuer, key)
 }
 
-
-internal fun Plugin.runTaskTimer(period: Long, task: BukkitRunnable.() -> Unit)
-{
-	object : BukkitRunnable()
-	{
-		override fun run()
-		{
-			task.invoke(this)
+val folia: Boolean by lazy {
+	run {
+		try {
+			Class.forName("io.papermc.paper.threadedregions.RegionizedServer")
+			true
+		} catch (ignored: ClassNotFoundException) {
+			false
 		}
-	}.runTaskTimer(this, 0L, period)
+	}
 }
 
-internal fun Plugin.runTaskTimerAsync(period: Long, task: BukkitRunnable.() -> Unit)
+internal interface CancellableTask {
+	fun cancel()
+}
+
+internal fun Plugin.runTaskTimer(period: Long, task: CancellableTask.() -> Unit)
 {
-	object : BukkitRunnable()
-	{
-		override fun run()
-		{
-			task.invoke(this)
-		}
-	}.runTaskTimerAsynchronously(this, 0L, period)
+	if (folia) {
+		server.globalRegionScheduler.runAtFixedRate(this, { task.invoke(object : CancellableTask {
+			override fun cancel() {
+				it.cancel()
+			}
+		}) }, period, period)
+	} else {
+		object : BukkitRunnable() {
+			override fun run() {
+				task.invoke(object : CancellableTask {
+					override fun cancel() {
+						cancel()
+					}
+				})
+			}
+		}.runTaskTimer(this, period, period)
+	}
+}
+
+internal fun Plugin.runTaskTimerAsync(period: Long, task: () -> Unit)
+{
+	if (folia) {
+		server.asyncScheduler.runAtFixedRate(
+			this,
+			{ task.invoke() },
+			period * 50,
+			period * 50,
+			TimeUnit.MILLISECONDS
+		)
+	} else {
+		server.scheduler.runTaskTimerAsynchronously(
+			this,
+			task,
+			period,
+			period
+		)
+	}
 }
 
 internal fun Plugin.runTaskLater(delay: Long, task: () -> Unit)
 {
-	server.scheduler.runTaskLater(this, task, delay)
+	if (folia) {
+		server.globalRegionScheduler.runDelayed(this, { task.invoke() }, delay)
+	} else {
+		server.scheduler.runTaskLater(this, task, delay)
+	}
 }
 
+internal fun Plugin.runTask(task: () -> Unit)
+{
+	if (folia) {
+		server.globalRegionScheduler.run(this) { task.invoke() }
+	} else {
+		server.scheduler.runTask(this, task)
+	}
+}
 
 internal fun Collection<Command>.takeRandomly(amount: Int): Collection<Command>
 {

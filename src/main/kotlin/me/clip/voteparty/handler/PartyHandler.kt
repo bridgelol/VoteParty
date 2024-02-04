@@ -13,6 +13,7 @@ import me.clip.voteparty.exte.color
 import me.clip.voteparty.exte.formMessage
 import me.clip.voteparty.exte.meta
 import me.clip.voteparty.exte.name
+import me.clip.voteparty.exte.runTask
 import me.clip.voteparty.exte.runTaskLater
 import me.clip.voteparty.exte.runTaskTimer
 import me.clip.voteparty.exte.sendMessage
@@ -83,7 +84,9 @@ class PartyHandler(override val plugin: VotePartyPlugin) : Addon
 			runPartyCommandEffects(player)
 			iter.next().command.forEach()
 			{ command ->
-				server.dispatchCommand(server.consoleSender, formMessage (player, command))
+				party.plugin.runTask {
+					server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				}
 			}
 		}
 	}
@@ -116,7 +119,9 @@ class PartyHandler(override val plugin: VotePartyPlugin) : Addon
 		{ perm ->
 			perm.commands.forEach()
 			{ command ->
-				server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				party.plugin.runTask {
+					server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				}
 			}
 
 		}
@@ -242,7 +247,9 @@ class PartyHandler(override val plugin: VotePartyPlugin) : Addon
 
 		cmds?.forEach()
 		{
-			server.dispatchCommand(server.consoleSender, if (player == null) it else formMessage(player, it))
+			party.plugin.runTask {
+				server.dispatchCommand(server.consoleSender, if (player == null) it else formMessage(player, it))
+			}
 		}
 	}
 

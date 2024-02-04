@@ -7,6 +7,7 @@ import me.clip.voteparty.conf.sections.PartySettings
 import me.clip.voteparty.conf.sections.VoteData
 import me.clip.voteparty.conf.sections.VoteSettings
 import me.clip.voteparty.exte.formMessage
+import me.clip.voteparty.exte.runTask
 import me.clip.voteparty.exte.sendMessage
 import me.clip.voteparty.exte.takeRandomly
 import me.clip.voteparty.leaderboard.LeaderboardType
@@ -75,7 +76,9 @@ class VotesHandler(override val plugin: VotePartyPlugin) : Addon, State
 		
 		settings.commands.forEach()
 		{ command ->
-			server.dispatchCommand(server.consoleSender, formMessage(player, command))
+			party.plugin.runTask {
+				server.dispatchCommand(server.consoleSender, formMessage(player, command))
+			}
 		}
 	}
 	
@@ -92,7 +95,9 @@ class VotesHandler(override val plugin: VotePartyPlugin) : Addon, State
 		{ perm ->
 			perm.commands.forEach()
 			{ command ->
-				server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				party.plugin.runTask {
+					server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				}
 			}
 		}
 	}
@@ -109,7 +114,9 @@ class VotesHandler(override val plugin: VotePartyPlugin) : Addon, State
 		settings.daily.entries.filter { entry -> entry.votes == party.usersHandler.getVoteCountSince(player, LeaderboardType.DAILY.start.invoke()) }.forEach { entry ->
 			entry.commands.forEach()
 			{ command ->
-				server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				party.plugin.runTask {
+					server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				}
 			}
 		}
 	}
@@ -126,7 +133,9 @@ class VotesHandler(override val plugin: VotePartyPlugin) : Addon, State
 		settings.weekly.entries.filter { entry -> entry.votes == party.usersHandler.getVoteCountSince(player, LeaderboardType.WEEKLY.start.invoke()) }.forEach { entry ->
 			entry.commands.forEach()
 			{ command ->
-				server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				party.plugin.runTask {
+					server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				}
 			}
 		}
 	}
@@ -143,7 +152,9 @@ class VotesHandler(override val plugin: VotePartyPlugin) : Addon, State
 		settings.monthly.entries.filter { entry -> entry.votes == party.usersHandler.getVoteCountSince(player, LeaderboardType.MONTHLY.start.invoke()) }.forEach { entry ->
 			entry.commands.forEach()
 			{ command ->
-				server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				party.plugin.runTask {
+					server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				}
 			}
 		}
 	}
@@ -160,7 +171,9 @@ class VotesHandler(override val plugin: VotePartyPlugin) : Addon, State
 		settings.yearly.entries.filter { entry -> entry.votes == party.usersHandler.getVoteCountSince(player, LeaderboardType.ANNUALLY.start.invoke()) }.forEach { entry ->
 			entry.commands.forEach()
 			{ command ->
-				server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				party.plugin.runTask {
+					server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				}
 			}
 		}
 	}
@@ -177,7 +190,9 @@ class VotesHandler(override val plugin: VotePartyPlugin) : Addon, State
 		settings.total.entries.filter { entry -> entry.votes == party.usersHandler.getVoteCountSince(player, LeaderboardType.ALLTIME.start.invoke()) }.forEach { entry ->
 			entry.commands.forEach()
 			{ command ->
-				server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				party.plugin.runTask {
+					server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				}
 			}
 		}
 	}
@@ -195,7 +210,9 @@ class VotesHandler(override val plugin: VotePartyPlugin) : Addon, State
 		
 		first?.commands?.forEach()
 		{
-			server.dispatchCommand(server.consoleSender, formMessage(player, it))
+			party.plugin.runTask {
+				server.dispatchCommand(server.consoleSender, formMessage(player, it))
+			}
 		}
 	}
 	
@@ -210,7 +227,9 @@ class VotesHandler(override val plugin: VotePartyPlugin) : Addon, State
 		
 		settings.commands.forEach()
 		{ command ->
-			server.dispatchCommand(server.consoleSender, formMessage(player, command))
+			party.plugin.runTask {
+				server.dispatchCommand(server.consoleSender, formMessage(player, command))
+			}
 		}
 	}
 	
@@ -227,7 +246,9 @@ class VotesHandler(override val plugin: VotePartyPlugin) : Addon, State
 		{ section ->
 			section.command.forEach()
 			{ command ->
-				server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				party.plugin.runTask {
+					server.dispatchCommand(server.consoleSender, formMessage(player, command))
+				}
 			}
 		}
 	}
@@ -259,7 +280,9 @@ class VotesHandler(override val plugin: VotePartyPlugin) : Addon, State
 		
 		settings.commands.forEach()
 		{ command ->
-			server.dispatchCommand(server.consoleSender, formMessage(player, command))
+			party.plugin.runTask {
+				server.dispatchCommand(server.consoleSender, formMessage(player, command))
+			}
 		}
 	}
 
